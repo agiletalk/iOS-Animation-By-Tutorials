@@ -155,7 +155,7 @@ class ViewController: UIViewController {
     func showMessage(index: Int) {
         label.text = messages[index]
         
-        UIView.transition(with: status, duration: 0.33, options: [.curveEaseOut, .transitionCurlDown], animations: {
+        UIView.transition(with: status, duration: 0.33, options: [.curveEaseOut, .transitionFlipFromBottom], animations: {
             self.status.isHidden = false
         }, completion: { _ in
             delay(2.0) {
