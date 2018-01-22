@@ -97,6 +97,7 @@ class ViewController: UIViewController {
             cubeTransition(label: flightStatus, text: data.flightStatus,  direction: direction)
             
             planeDepart()
+            summarySwitch(to: data.summary)
         } else {
             bgImageView.image = UIImage(named: data.weatherImageName)
             snowView.isHidden = !data.showWeatherEffects
@@ -204,5 +205,20 @@ class ViewController: UIViewController {
                 self.planeImage.center = originalCenter
             })
         }, completion: nil)
+    }
+    
+    func summarySwitch(to text: String) {
+        UIView.animateKeyframes(withDuration: 1.0, delay: 0.0, options: [], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.45, animations: {
+                self.summary.center.y -= 100.0
+            })
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.45, animations: {
+                self.summary.center.y += 100.0
+            })
+        }, completion: nil)
+        
+        delay(seconds: 0.8, completion: {
+            self.summary.text = text
+        })
     }
 }
