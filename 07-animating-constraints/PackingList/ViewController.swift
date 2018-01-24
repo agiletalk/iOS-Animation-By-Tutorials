@@ -106,6 +106,12 @@ class ViewController: UIViewController {
             conWidth.constant = 0.0
             self.view.layoutIfNeeded()
         }, completion: nil)
+        
+        UIView.animate(withDuration: 0.6, delay: 1.0, options: .curveEaseOut, animations: {
+            imageView.alpha = 0.0
+        }, completion: { _ in
+            imageView.removeFromSuperview()
+        })
     }
 }
 
