@@ -27,6 +27,15 @@ func delay(seconds: Double, completion: @escaping ()-> Void) {
     DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: completion)
 }
 
+func tintBackgroundColor(layer: CALayer, toColor: UIColor) {
+    let tint = CABasicAnimation(keyPath: "backgroundColor")
+    tint.fromValue = layer.backgroundColor
+    tint.toValue = toColor.cgColor
+    tint.duration = 1.0
+    layer.add(tint, forKey: nil)
+    layer.backgroundColor = toColor.cgColor
+}
+
 class ViewController: UIViewController {
     
     // MARK: IB outlets
@@ -186,11 +195,13 @@ class ViewController: UIViewController {
                        animations: {
                         self.spinner.center = CGPoint(x: -20.0, y: 16.0)
                         self.spinner.alpha = 0.0
-                        self.loginButton.backgroundColor = UIColor(red: 0.63, green: 0.84, blue: 0.35, alpha: 1.0)
                         self.loginButton.bounds.size.width -= 80.0
                         self.loginButton.center.y -= 60.0
         },
-                       completion: nil
+                       completion: { _ in
+                        let tintColor = UIColor(red: 0.63, green: 0.84, blue: 0.35, alpha: 1.0)
+                        tintBackgroundColor(layer: self.loginButton.layer, toColor: tintColor)
+        }
         )
     }
     
@@ -213,12 +224,14 @@ class ViewController: UIViewController {
                        initialSpringVelocity: 0.0,
                        animations: {
                         self.loginButton.center.y += 60.0
-                        self.loginButton.backgroundColor = UIColor(red: 0.85, green: 0.83, blue: 0.45, alpha: 1.0)
                         self.spinner.center = CGPoint(x: 40.0, y: self.loginButton.frame.size.height/2)
                         self.spinner.alpha = 1.0
         },
                        completion: nil
         )
+        
+        let tintColor = UIColor(red: 0.85, green: 0.83, blue: 0.45, alpha: 1.0)
+        tintBackgroundColor(layer: loginButton.layer, toColor: tintColor)
     }
     
     func animateCloud(_ cloud: UIImageView) {
