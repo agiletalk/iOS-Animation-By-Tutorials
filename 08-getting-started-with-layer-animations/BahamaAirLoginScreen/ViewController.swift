@@ -36,6 +36,14 @@ func tintBackgroundColor(layer: CALayer, toColor: UIColor) {
     layer.backgroundColor = toColor.cgColor
 }
 
+func roundCorners(layer: CALayer, toRadius: CGFloat) {
+    let round = CABasicAnimation(keyPath: "cornerRadius")
+    round.toValue = toRadius
+    round.duration = 0.33
+    layer.add(round, forKey: nil)
+    layer.cornerRadius = toRadius
+}
+
 class ViewController: UIViewController {
     
     // MARK: IB outlets
@@ -201,6 +209,7 @@ class ViewController: UIViewController {
                        completion: { _ in
                         let tintColor = UIColor(red: 0.63, green: 0.84, blue: 0.35, alpha: 1.0)
                         tintBackgroundColor(layer: self.loginButton.layer, toColor: tintColor)
+                        roundCorners(layer: self.loginButton.layer, toRadius: 10.0)
         }
         )
     }
@@ -232,6 +241,7 @@ class ViewController: UIViewController {
         
         let tintColor = UIColor(red: 0.85, green: 0.83, blue: 0.45, alpha: 1.0)
         tintBackgroundColor(layer: loginButton.layer, toColor: tintColor)
+        roundCorners(layer: loginButton.layer, toRadius: 25.0)
     }
     
     func animateCloud(_ cloud: UIImageView) {
