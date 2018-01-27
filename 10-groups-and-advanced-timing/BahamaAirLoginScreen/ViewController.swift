@@ -108,23 +108,31 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        let groupAnimation = CAAnimationGroup()
+        groupAnimation.duration = 0.5
+        groupAnimation.fillMode = kCAFillModeBackwards
+        groupAnimation.delegate = self
+        groupAnimation.setValue("form", forKey: "name")
+        
+        let fadeIn = CABasicAnimation(keyPath: "opacity")
+        fadeIn.fromValue = 0.25
+        fadeIn.toValue = 1.0
+        
         let flyRight = CABasicAnimation(keyPath: "position.x")
         flyRight.fromValue = -view.bounds.size.width/2
         flyRight.toValue = view.bounds.size.width/2
-        flyRight.duration = 0.5
-        flyRight.delegate = self
-        flyRight.setValue("form", forKey: "name")
-        flyRight.setValue(heading.layer, forKey: "layer")
-        heading.layer.add(flyRight, forKey: nil)
         
-        flyRight.beginTime = CACurrentMediaTime() + 0.3
-        flyRight.fillMode = kCAFillModeBoth
-        flyRight.setValue(username.layer, forKey: "layer")
-        username.layer.add(flyRight, forKey: nil)
+        groupAnimation.animations = [fadeIn, flyRight]
+        groupAnimation.setValue(heading.layer, forKey: "layer")
+        heading.layer.add(groupAnimation, forKey: nil)
         
-        flyRight.beginTime = CACurrentMediaTime() + 0.4
-        flyRight.setValue(password.layer, forKey: "layer")
-        password.layer.add(flyRight, forKey: nil)
+        groupAnimation.setValue(username.layer, forKey: "layer")
+        groupAnimation.beginTime = CACurrentMediaTime() + 0.3
+        username.layer.add(groupAnimation, forKey: nil)
+        
+        groupAnimation.setValue(password.layer, forKey: "layer")
+        groupAnimation.beginTime = CACurrentMediaTime() + 0.4
+        password.layer.add(groupAnimation, forKey: nil)
         
         username.layer.position.x = view.bounds.size.width/2
         password.layer.position.x = view.bounds.size.width/2
