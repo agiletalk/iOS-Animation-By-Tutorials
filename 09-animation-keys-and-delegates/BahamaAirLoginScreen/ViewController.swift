@@ -162,10 +162,10 @@ class ViewController: UIViewController {
                        completion: nil
         )
         
-        animateCloud(cloud1)
-        animateCloud(cloud2)
-        animateCloud(cloud3)
-        animateCloud(cloud4)
+        animateCloud(layer: cloud1.layer)
+        animateCloud(layer: cloud2.layer)
+        animateCloud(layer: cloud3.layer)
+        animateCloud(layer: cloud4.layer)
         
         let flyLeft = CABasicAnimation(keyPath: "position.x")
         flyLeft.fromValue = info.layer.position.x + view.frame.size.width
@@ -273,18 +273,17 @@ class ViewController: UIViewController {
         roundCorners(layer: loginButton.layer, toRadius: 25.0)
     }
     
-    func animateCloud(_ cloud: UIImageView) {
-        let cloudSpeed = 60.0 / view.frame.size.width
-        let duration = (view.frame.size.width - cloud.frame.origin.x) * cloudSpeed
-        UIView.animate(withDuration: TimeInterval(duration), delay: 0.0, options: .curveLinear,
-                       animations: {
-                        cloud.frame.origin.x = self.view.frame.size.width
-        },
-                       completion: {_ in
-                        cloud.frame.origin.x = -cloud.frame.size.width
-                        self.animateCloud(cloud)
-        }
-        )
+    func animateCloud(layer: CALayer) {
+        let cloudSpeed = 60.0 / Double(view.layer.frame.size.width)
+        let duration: TimeInterval = Double(view.layer.frame.size.width - layer.frame.origin.x) * cloudSpeed
+        
+        let cloudMove = CABasicAnimation(keyPath: "position.x")
+        cloudMove.duration = duration
+        cloudMove.toValue = self.view.bounds.width + layer.bounds.width/2
+        cloudMove.delegate = self
+        cloudMove.setValue("cloud", forKey: "name")
+        cloudMove.setValue(layer, forKey: "layer")
+        layer.add(cloudMove, forKey: nil)
     }
     
     // MARK: UITextFieldDelegate
@@ -315,6 +314,17 @@ extension ViewController: CAAnimationDelegate {
             pulse.toValue = 1.0
             pulse.duration = 0.25
             layer?.add(pulse, forKey: nil)
+        }
+        
+        if name == "cloud" {
+            if let layer = anim.value(forKey: "layer") as? CALayer {
+                anim.setValue(nil, forKey: "layer")
+                
+                layer.position.x = -layer.bounds.width/2
+                delay(seconds: 0.5, completion: {
+                    self.animateCloud(layer: layer)
+                })
+            }
         }
     }
 }
