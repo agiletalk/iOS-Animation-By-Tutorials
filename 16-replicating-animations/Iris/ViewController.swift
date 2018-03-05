@@ -77,7 +77,20 @@ class ViewController: UIViewController {
     
     @IBAction func actionEndMonitoring(_ sender: AnyObject) {
         monitor.stopMonitoring()
-        dot.removeAllAnimations()
+        //dot.removeAllAnimations()
+        let scale = CABasicAnimation(keyPath: "transform.scale.y")
+        scale.toValue = 1.0
+        scale.duration = 0.33
+        scale.isRemovedOnCompletion = false
+        scale.fillMode = kCAFillModeForwards
+        dot.add(scale, forKey: nil)
+        
+        let tint = CABasicAnimation(keyPath: "backgroundColor")
+        tint.fromValue = UIColor.green.cgColor
+        tint.toValue = UIColor.magenta.cgColor
+        tint.duration = 0.99
+        tint.fillMode = kCAFillModeBackwards
+        dot.add(tint, forKey: nil)
         
         //speak after 1 second
         delay(seconds: 1.0) {
