@@ -58,5 +58,10 @@ class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             }
             transitionContext.completeTransition(true)
         })
+        
+        herbView.layer.cornerRadius = presenting ? 20.0 / xScaleFactor : 0.0
+        UIView.animate(withDuration: duration / 2) {
+            herbView.layer.cornerRadius = self.presenting ? 0.0 : 20.0 / xScaleFactor
+        }
     }
 }
