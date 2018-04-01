@@ -46,6 +46,15 @@ class LockScreenViewController: UIViewController {
     tableView.estimatedRowHeight = 130.0
     tableView.rowHeight = UITableViewAutomaticDimension
   }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    tableView.transform = CGAffineTransform(scaleX: 0.67, y: 0.67)
+    tableView.alpha = 0
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    AnimatorFactory.scaleUp(view: tableView).startAnimation()
+  }
 
   override func viewWillLayoutSubviews() {
     blurView.frame = view.bounds
@@ -59,6 +68,12 @@ class LockScreenViewController: UIViewController {
     //present the view controller
     settingsController = storyboard?.instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
     present(settingsController, animated: true, completion: nil)
+  }
+  
+  func toggleBlur(_ blurred: Bool) {
+    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.5, delay: 0.1, options: .curveEaseOut, animations: {
+      self.blurView.alpha = blurred ? 1 : 0
+    }, completion: nil)
   }
   
 }
@@ -83,6 +98,26 @@ extension LockScreenViewController: UITableViewDataSource {
       cell.tableView = tableView
       cell.owner = self
       return cell
+    }
+  }
+}
+
+extension LockScreenViewController: UISearchBarDelegate {
+  func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+    toggleBlur(true)
+  }
+  
+  func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    toggleBlur(false)
+  }
+  
+  func searchBarResultsListButtonClicked(_ searchBar: UISearchBar) {
+    searchBar.resignFirstResponder()
+  }
+  
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    if searchText.isEmpty {
+      searchBar.resignFirstResponder()
     }
   }
 }
