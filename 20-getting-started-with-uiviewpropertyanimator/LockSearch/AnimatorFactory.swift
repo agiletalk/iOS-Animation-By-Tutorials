@@ -41,4 +41,11 @@ class AnimatorFactory {
       view.transform = .identity
     })
   }
+  
+  @discardableResult
+  static func fade(view: UIView, visible: Bool) -> UIViewPropertyAnimator {
+    return UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.5, delay: 0.1, options: .curveEaseOut, animations: {
+      view.alpha = visible ? 1 : 0
+    }, completion: nil)
+  }
 }
