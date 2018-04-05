@@ -33,6 +33,12 @@ class LockScreenViewController: UIViewController {
   let blurView = UIVisualEffectView(effect: nil)
 
   var settingsController: SettingsViewController!
+  
+  var startFrame: CGRect?
+  var previewView: UIView?
+  var previewAnimator: UIViewPropertyAnimator?
+  
+  let previewEffectView = IconEffectView(blur: .extraLight)
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -91,7 +97,55 @@ class LockScreenViewController: UIViewController {
   }
 }
 
-extension LockScreenViewController: WidgetsOwnerProtocol { }
+extension LockScreenViewController: WidgetsOwnerProtocol {
+  func startPreview(for forView: UIView) {
+    previewView?.removeFromSuperview()
+    previewView = forView.snapshotView(afterScreenUpdates: false)
+    view.insertSubview(previewView!, aboveSubview: blurView)
+    
+    previewView?.frame = forView.convert(forView.bounds, to: view)
+    startFrame = previewView?.frame
+    addEffectView(below: previewView!)
+    
+    previewAnimator = AnimatorFactory.grow(view: previewEffectView, blurView: blurView)
+  }
+  
+  func addEffectView(below forView: UIView) {
+    previewEffectView.removeFromSuperview()
+    previewEffectView.frame = forView.frame
+    
+    forView.superview?.insertSubview(previewEffectView, belowSubview: forView)
+  }
+  
+  func updatePreview(percent: CGFloat) {
+    print("updatePreview")
+    previewAnimator?.fractionComplete = max(0.01, min(0.99, percent))
+  }
+  
+  func cancelPreview() {
+    if let previewAnimator = previewAnimator {
+      previewAnimator.isReversed = true
+      previewAnimator.startAnimation()
+      previewAnimator.addCompletion { position in
+        switch position {
+        case .start:
+          self.previewView?.removeFromSuperview()
+          self.previewEffectView.removeFromSuperview()
+        default:
+          break
+        }
+      }
+    }
+  }
+  
+  func finishPreview() {
+    previewAnimator?.stopAnimation(false)
+    previewAnimator?.finishAnimation(at: .end)
+    previewAnimator = nil
+    
+    AnimatorFactory.complete(view: previewEffectView).startAnimation()
+  }
+}
 
 extension LockScreenViewController: UITableViewDataSource {
 
